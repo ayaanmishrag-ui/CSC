@@ -38,7 +38,7 @@
     <div class="box" id="authBox">
         <h2 id="formTitle" style="color: #0d6efd;"><i class="fa-solid fa-right-to-bracket"></i> Login</h2>
         
-        <!-- नया रोल सेलेक्ट स्विच (कोई ओवरलैपिंग समस्या नहीं होगी) -->
+        <!-- नया रोल सेलेक्ट स्विच -->
         <div id="roleContainer">
             <label style="margin-top: 0;">यूजर प्रकार चुनें:</label>
             <div class="role-selector">
@@ -96,7 +96,8 @@
     </div>
 
     <script>
-        const scriptURL = "https://script.google.com/macros/s/AKfycbyNn7OuCCsdESPmrLlT_MMQ7IOw1N6SOjZMmvz93SQFZG3_fiWYm9uysf2zNkvc-SJ_cQ/exec";
+        // यहाँ आपका नया गूगल ऐप्स स्क्रिप्ट यूआरएल इंटीग्रेटेड है
+        const scriptURL = "https://script.google.com/macros/s/AKfycbzYuJzc9epj5bRQ8aFxuhXo2THclR4BSvLl3FIU-7emhvp0yMdwyq1CezNsUyw0qrjujw/exec";
 
         let currentRole = "retailer";
         let isRegister = false;
@@ -181,7 +182,7 @@
             .catch(err => {
                 submitBtn.disabled = false;
                 submitBtn.innerText = isRegister ? "खाता रजिस्टर करें" : "Login";
-                alert("कनेक्शन त्रुटि! कृपया जांचें कि आपने फाइल को GitHub Pages या सर्वर से खोला है या नहीं।");
+                alert("कनेक्शन त्रुटि! कृपया जांचें कि आपने फाइल को लाइव सर्वर या सही माध्यम से खोला है या नहीं।");
             });
         }
 
