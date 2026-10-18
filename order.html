@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ऑर्डर करें | CSC पोर्टल</title>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        /* नेविगेशन बार */
+        .navbar {
+            background-color: #0d6efd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 15px;
+            font-weight: 500;
+        }
+
+        nav a.active {
+            border-bottom: 2px solid white;
+            padding-bottom: 3px;
+        }
+
+        /* ऑर्डर फॉर्म बॉक्स */
+        .order-container {
+            max-width: 500px;
+            margin: 40px auto;
+            padding: 25px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0px 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .order-container h2 {
+            text-align: center;
+            color: #0d6efd;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #444;
+        }
+
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .btn-submit {
+            background-color: #198754;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover {
+            background-color: #146c43;
+        }
+
+        footer {
+            background-color: #212529;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- नेविगेशन बार -->
+    <header class="navbar">
+        <div class="logo">
+            <i class="fa-solid fa-laptop-code"></i> CSC सेवा पोर्टल
+        </div>
+        <nav>
+            <a href="index.html">होम</a>
+            <a href="services.html">सेवाएं</a>
+            <a href="order.html" class="active">ऑर्डर करें</a>
+            <a href="about.html">हमारे बारे में</a>
+            <a href="contact.html">संपर्क करें</a>
+        </nav>
+    </header>
+
+    <!-- ऑर्डर फॉर्म सेक्शन -->
+    <div class="order-container">
+        <h2>सर्विस ऑर्डर फॉर्म</h2>
+        
+        <form id="orderForm" onsubmit="submitToGoogleSheet(event)">
+            
+            <div class="form-group">
+                <label>कौन सी सर्विस चाहिए?:</label>
+                <input type="text" id="selectedService" placeholder="जैसे: पैन कार्ड, आधार प्रिंट" required>
+            </div>
+
+            <div class="form-group">
+                <label>कस्टमर का नाम:</label>
+                <input type="text" id="custName" placeholder="अपना पूरा नाम दर्ज करें" required>
+            </div>
+
+            <div class="form-group">
+                <label>WhatsApp नंबर:</label>
+                <input type="tel" id="custPhone" placeholder="10 अंकों का मोबाइल नंबर" required>
+            </div>
+
+            <div class="form-group">
+                <label>ज़रूरी दस्तावेज या निर्देश:</label>
+                <textarea id="custDetails" rows="3" placeholder="आवेदन से जुड़ी आवश्यक जानकारी..."></textarea>
+            </div>
+
+            <!-- हिडन फील्ड्स ताकि script.js सही से काम करे -->
+            <div style="display:none;">
+                <span id="serviceFee">₹50</span>
+                <input type="text" id="paymentTxn" value="Direct Order Form">
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <i class="fa-solid fa-paper-plane"></i> ऑर्डर सबमिट करें
+            </button>
+        </form>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 CSC डिजिटल सेवा पोर्टल. सभी अधिकार सुरक्षित।</p>
+    </footer>
+
+    <!-- साझा जावास्क्रिप्ट फाइल -->
+    <script src="script.js"></script>
+</body>
+</html>

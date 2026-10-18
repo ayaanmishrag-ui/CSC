@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>पोर्टल | एडमिन एवं रिटेलर लॉगिन</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; }
+        
+        .box { max-width: 420px; background: white; margin: 30px auto; padding: 30px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); text-align: center; }
+        .dashboard-box { max-width: 950px; background: white; margin: 20px auto; padding: 25px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); display: none; }
+        
+        h2 { margin-bottom: 20px; }
+        label { font-size: 13px; font-weight: bold; color: #444; display: block; text-align: left; margin-top: 12px; margin-bottom: 5px; }
+        input { width: 100%; padding: 12px 14px; margin-bottom: 12px; border: 1px solid #dcdcdc; border-radius: 8px; font-size: 14px; outline: none; transition: 0.3s; }
+        input:focus { border-color: #0d6efd; box-shadow: 0 0 5px rgba(13, 110, 253, 0.2); }
+
+        /* नया मॉडर्न रोल सेलेक्टर बटन स्टाइल */
+        .role-selector { display: flex; background: #f1f3f5; padding: 4px; border-radius: 8px; margin-bottom: 15px; }
+        .role-btn { flex: 1; padding: 10px; border: none; background: transparent; font-size: 14px; font-weight: 600; color: #555; border-radius: 6px; cursor: pointer; transition: 0.3s; }
+        .role-btn.active { background: #0d6efd; color: white; box-shadow: 0 2px 6px rgba(13, 110, 253, 0.3); }
+        
+        .submit-btn { background: #0d6efd; color: white; padding: 12px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; border: none; font-size: 15px; margin-top: 10px; transition: 0.3s; }
+        .submit-btn:hover { background: #0b5ed7; }
+        
+        .toggle-link { color: #0d6efd; cursor: pointer; margin-top: 18px; display: block; font-size: 14px; text-align: center; font-weight: 500; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background-color: #0d6efd; color: white; }
+    </style>
+</head>
+<body>
+
+    <!-- 1. लॉगिन / रजिस्ट्रेशन कार्ड -->
+    <div class="box" id="authBox">
+        <h2 id="formTitle" style="color: #0d6efd;"><i class="fa-solid fa-right-to-bracket"></i> Login</h2>
+        
+        <!-- नया रोल सेलेक्ट स्विच (कोई ओवरलैपिंग समस्या नहीं होगी) -->
+        <div id="roleContainer">
+            <label style="margin-top: 0;">यूजर प्रकार चुनें:</label>
+            <div class="role-selector">
+                <button type="button" class="role-btn active" id="btnRetailer" onclick="setRole('retailer')"><i class="fa-solid fa-user"></i> Retailer</button>
+                <button type="button" class="role-btn" id="btnAdmin" onclick="setRole('admin')"><i class="fa-solid fa-user-shield"></i> Admin</button>
+            </div>
+        </div>
+
+        <form id="authForm" onsubmit="handleAuth(event)">
+            <div id="registerFields" style="display:none;">
+                <label for="name">पूरा नाम:</label>
+                <input type="text" id="name" placeholder="पूरा नाम दर्ज करें">
+                
+                <label for="email">ईमेल आईडी:</label>
+                <input type="email" id="email" placeholder="ईमेल आईडी दर्ज करें">
+            </div>
+            
+            <label for="phone" id="phoneLabel">यूजर आईडी / मोबाइल नंबर:</label>
+            <input type="text" id="phone" placeholder="मोबाइल नंबर दर्ज करें" required>
+            
+            <label for="password">पासवर्ड:</label>
+            <input type="password" id="password" placeholder="पासवर्ड दर्ज करें" required>
+            
+            <button type="submit" class="submit-btn" id="submitBtn">Login</button>
+        </form>
+
+        <span class="toggle-link" id="toggleText" onclick="toggleMode()">नया रिटेलर खाता बनाएं? यहाँ क्लिक करें</span>
+        <br>
+        <a href="index.html" style="text-decoration:none; color:#666; font-size:13px; display:inline-block; margin-top:10px;"><i class="fa-solid fa-arrow-left"></i> होम पेज पर वापस जाएं</a>
+    </div>
+
+    <!-- 2. डैशबोर्ड (एडमिन या रिटेलर) -->
+    <div class="dashboard-box" id="dashboardBox">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #eee; padding-bottom: 10px;">
+            <h2 style="color: #198754; margin: 0;"><i class="fa-solid fa-gauge"></i> <span id="panelTitle"></span></h2>
+            <button onclick="logout()" style="background: #dc3545; color:white; border:none; border-radius:5px; width: auto; padding: 8px 15px; font-size: 13px; cursor:pointer;">लॉग आउट</button>
+        </div>
+
+        <div style="margin-top: 20px; background: #e9ecef; padding: 12px; border-radius: 6px;">
+            <p><strong>यूजर नाम:</strong> <span id="userNameDisplay"></span></p>
+            <p><strong>पैनल प्रकार:</strong> <span id="userRoleDisplay" style="color: #0d6efd; font-weight: bold;"></span></p>
+        </div>
+
+        <!-- एडमिन सेक्शन (रिटेलर्स की सूची) -->
+        <div id="adminSection" style="display:none; margin-top: 25px;">
+            <h3 style="color: #333; border-left: 4px solid #0d6efd; padding-left: 8px;">सभी रजिस्टर्ड रिटेलर्स की सूची</h3>
+            <div id="retailersListContainer" style="overflow-x: auto; margin-top: 10px;">रिटेलर्स लोड हो रहे हैं...</div>
+        </div>
+
+        <!-- ऑर्डर्स की सूची -->
+        <div style="margin-top: 25px;">
+            <h3 style="color: #333; border-left: 4px solid #198754; padding-left: 8px;" id="orderSectionTitle">ऑर्डर्स की सूची</h3>
+            <div id="orderListContainer" style="overflow-x: auto; margin-top: 10px;">डेटा लोड हो रहा है...</div>
+        </div>
+    </div>
+
+    <script>
+        const scriptURL = "https://script.google.com/macros/s/AKfycbyNn7OuCCsdESPmrLlT_MMQ7IOw1N6SOjZMmvz93SQFZG3_fiWYm9uysf2zNkvc-SJ_cQ/exec";
+
+        let currentRole = "retailer";
+        let isRegister = false;
+
+        window.onload = function() {
+            let savedPhone = localStorage.getItem("userPhone");
+            let savedName = localStorage.getItem("userName");
+            let savedRole = localStorage.getItem("userRole");
+            if (savedPhone) {
+                showDashboard(savedName, savedPhone, savedRole);
+            }
+        };
+
+        function setRole(role) {
+            currentRole = role;
+            document.getElementById('btnRetailer').classList.toggle('active', role === 'retailer');
+            document.getElementById('btnAdmin').classList.toggle('active', role === 'admin');
+            
+            let phoneInput = document.getElementById('phone');
+            if (role === 'admin') {
+                phoneInput.placeholder = "admin दर्ज करें";
+            } else {
+                phoneInput.placeholder = "मोबाइल नंबर दर्ज करें";
+            }
+        }
+
+        function toggleMode() {
+            isRegister = !isRegister;
+            document.getElementById('formTitle').innerText = isRegister ? "Retailer Registration" : "Login";
+            document.getElementById('roleContainer').style.display = isRegister ? "none" : "block";
+            document.getElementById('registerFields').style.display = isRegister ? "block" : "none";
+            document.getElementById('phoneLabel').innerText = isRegister ? "मोबाइल नंबर:" : "यूजर आईडी / मोबाइल नंबर:";
+            document.getElementById('phone').placeholder = isRegister ? "अपना मोबाइल नंबर लिखें" : (currentRole === 'admin' ? "admin दर्ज करें" : "मोबाइल नंबर दर्ज करें");
+            document.getElementById('submitBtn').innerText = isRegister ? "खाता रजिस्टर करें" : "Login";
+            document.getElementById('toggleText').innerText = isRegister ? "पहले से खाता है? लॉगिन करें" : "नया रिटेलर खाता बनाएं? यहाँ क्लिक करें";
+        }
+
+        function handleAuth(event) {
+            event.preventDefault();
+            let role = isRegister ? "retailer" : currentRole;
+            let phone = document.getElementById('phone').value.trim();
+            let password = document.getElementById('password').value.trim();
+            let name = document.getElementById('name').value.trim();
+            let email = document.getElementById('email').value.trim();
+
+            let submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerText = "कृपया प्रतीक्षा करें...";
+            submitBtn.disabled = true;
+
+            let data = { 
+                action: isRegister ? "register" : "login", 
+                role: role, 
+                phone: phone, 
+                password: password, 
+                name: name, 
+                email: email 
+            };
+
+            fetch(scriptURL, { 
+                method: "POST", 
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(response => {
+                submitBtn.disabled = false;
+                submitBtn.innerText = isRegister ? "खाता रजिस्टर करें" : "Login";
+
+                if (response.status === "success") {
+                    if (isRegister) {
+                        alert(response.message || "रजिस्ट्रेशन सफल रहा!");
+                        toggleMode();
+                    } else {
+                        localStorage.setItem("userPhone", response.phone);
+                        localStorage.setItem("userName", response.name);
+                        localStorage.setItem("userRole", response.role);
+                        showDashboard(response.name, response.phone, response.role);
+                    }
+                } else {
+                    alert(response.message || "गलत विवरण!");
+                }
+            })
+            .catch(err => {
+                submitBtn.disabled = false;
+                submitBtn.innerText = isRegister ? "खाता रजिस्टर करें" : "Login";
+                alert("कनेक्शन त्रुटि! कृपया जांचें कि आपने फाइल को GitHub Pages या सर्वर से खोला है या नहीं।");
+            });
+        }
+
+        function showDashboard(name, phone, role) {
+            document.getElementById('authBox').style.display = "none";
+            document.getElementById('dashboardBox').style.display = "block";
+            document.getElementById('userNameDisplay').innerText = name;
+            document.getElementById('userRoleDisplay').innerText = role === "admin" ? "मास्टर एडमिन (Super Admin)" : "वेरिफाइड रिटेलर (Retailer Partner)";
+            document.getElementById('panelTitle').innerText = role === "admin" ? "एडमिन मास्टर कंट्रोल पैनल" : "रिटेलर व्यक्तिगत डैशबोर्ड";
+
+            if (role === "admin") {
+                document.getElementById('adminSection').style.display = "block";
+                document.getElementById('orderSectionTitle').innerText = "सभी रिटेलर्स के कुल लाइव ऑर्डर्स";
+            }
+
+            fetch(scriptURL + "?action=getData&phone=" + phone + "&role=" + role)
+            .then(res => res.json())
+            .then(data => {
+                let orderHtml = `<table><tr><th>ऑर्डर आईडी</th><th>रिटेलर</th><th>ग्राहक नाम</th><th>मोबाइल</th><th>सेवा</th><th>शुल्क</th><th>स्टेटस</th></tr>`;
+                if(data.orders && data.orders.length > 0) {
+                    data.orders.forEach(o => {
+                        orderHtml += `<tr><td>${o.orderId}</td><td>${o.retailer}</td><td>${o.name}</td><td>${o.customerPhone}</td><td>${o.service}</td><td>₹${o.amount}</td><td><b>${o.status}</b></td></tr>`;
+                    });
+                } else {
+                    orderHtml += `<tr><td colspan="7">कोई ऑर्डर उपलब्ध नहीं है।</td></tr>`;
+                }
+                orderHtml += "</table>";
+                document.getElementById('orderListContainer').innerHTML = orderHtml;
+
+                if (role === "admin" && data.retailers) {
+                    let retHtml = `<table><tr><th>आईडी</th><th>नाम</th><th>मोबाइल नंबर</th><th>ईमेल आईडी</th></tr>`;
+                    if(data.retailers.length > 0) {
+                        data.retailers.forEach(r => {
+                            retHtml += `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.phone}</td><td>${r.email}</td></tr>`;
+                        });
+                    } else {
+                        retHtml += `<tr><td colspan="4">अभी कोई रिटेलर नहीं जुड़ा है।</td></tr>`;
+                    }
+                    retHtml += "</table>";
+                    document.getElementById('retailersListContainer').innerHTML = retHtml;
+                }
+            });
+        }
+
+        function logout() {
+            localStorage.clear();
+            location.reload();
+        }
+    </script>
+</body>
+</html>
